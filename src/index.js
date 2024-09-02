@@ -3,58 +3,73 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import AppRouter from './routers/AppRouter';
 import './App.css';
-import { createStore } from 'redux';
+import { createStore,combineReducers } from 'redux';  // Redux'tan createStore'u içe aktar
+import { type } from '@testing-library/user-event/dist/type';
+import {v4 as uuid } from "uuid";
 
-// Initial state
-const initialState = {
-  count: 5,
-};
 
-// Reducer
-const counterReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'INCREMENT':
-      const incrementBy = typeof action.incrementBy === 'number' ? action.incrementBy : 1;
-      return {
-        ...state,  // state'in diğer özelliklerini korur
-        count: state.count + incrementBy,
-      };
-    case 'DECREMENT':
-      return {
-        ...state,  // state'in diğer özelliklerini korur
-        count: state.count - 1,
-      };
-    case 'RESET':
-      return {
-        ...state,  // state'in diğer özelliklerini korur
-        count: initialState.count,
-      };
+const initialState  = {
+  blogs:[
+    {
+      id:1,
+      title: "Blog Title 1",
+      description: "Blog Desciription 1",
+      dateAdded:0
+    }
+  ],
+  auth:{
+    userid:1,
+    username:"YunusEmre",
+    email:"info@YunusEmre.com"
+  }
+}
+//ACTIONS CREATER
+const AddBlog = ( {title="", description="", dateAdded=0} ) => ({
+  type:"ADD_BLOG",
+  blog:{
+    id:uuid(),// unick id
+    title:title,
+    description:description,
+    dateAdded:dateAdded
+  }
+})
+
+const blogState = []
+
+const blogReducer = (state = blogState ,action) =>{
+  switch(action.type){
+    case "ADD_BLOG":
+      return [
+        ...state,
+        action.blog
+      ]
     default:
       return state;
   }
-};
+}
 
-// Create store
-const store = createStore(counterReducer);
+const authState = {};
 
-// Subscribe to store changes
-store.subscribe(() => {
-  console.log('Current State:', store.getState());
-});
+const authReducer = (state = authState ,action) =>{
+  switch(action.type){
+    default:
+      return state;
+  }
+}
 
-// Dispatch actions
-store.dispatch({
-  type: 'INCREMENT',
-  incrementBy: 10,
-});
-store.dispatch({
-  type: 'DECREMENT',
-});
-store.dispatch({
-  type: 'RESET',
-});
+const store = createStore( // store a iki tane reducer tanimladim
+  combineReducers({
+      blogs:blogReducer,
+      auth:authReducer
+  })
+)
 
-console.log('Final State:', store.getState());
+store.subscribe(()=> {
+  console.log(store.getState())
+})
+
+store.dispatch(AddBlog({title: "blog title4", description:"blog description4"}))
+
 
 // Render the app
 const root = ReactDOM.createRoot(document.getElementById('root'));
