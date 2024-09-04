@@ -3,93 +3,10 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import AppRouter from './routers/AppRouter';
 import './App.css';
-import { createStore,combineReducers } from 'redux';  // Redux'tan createStore'u içe aktar
-import { type } from '@testing-library/user-event/dist/type';
-import {v4 as uuid } from "uuid"; // id seklinde benzersiz kimlik
+import configureStore from './store/configureStore';
+import {AddBlog,RemoveBlog,EditBlog} from "./actions/blogs"
 
-
-
-// const initialState  = {
-//   blogs:[
-//     {
-//       id:1,
-//       title: "Blog Title 1",
-//       description: "Blog Desciription 1",
-//       dateAdded:0
-//     }
-//   ],
-//   auth:{
-//     userid:1,
-//     username:"YunusEmre",
-//     email:"info@YunusEmre.com"
-//   }
-// }
-//ACTIONS CREATER
-const AddBlog = ( {title="", description="", dateAdded=0} ) => ({
-  type:"ADD_BLOG",
-  blog:{
-    id:uuid(),// unick id
-    title:title,
-    description:description,
-    dateAdded:dateAdded
-  }
-})
-
-const RemoveBlog =({id}) => ({
-  type:"REMOVE_BLOG",
-  id:id 
-})
-const EditBlog = (id,updates) => ({
-  type: "EDIT_BLOG",
-  id,
-  updates
-})
-
-const blogState = []
-
-const blogReducer = (state = blogState ,action) =>{
-  switch(action.type){
-    case "ADD_BLOG":
-      return [
-        ...state,
-        action.blog
-      ]
-    case "REMOVE_BLOG":
-      return state.filter(({ id }) => {
-        return id !== action.id;
-      })
-    case "EDIT_BLOG":
-      return state.map((blog) => {
-        if(blog.id === action.id){
-            return {
-              ...blog,
-              ...action.updates
-            }
-        }
-        else{
-          return blog;
-        }
-      })
-    default:
-      return state;
-  }
-}
-
-const authState = {};
-
-const authReducer = (state = authState ,action) =>{
-  switch(action.type){
-    default:
-      return state;
-  }
-}
-
-const store = createStore( // store a iki tane reducer tanimladim
-  combineReducers({
-      blogs:blogReducer,
-      auth:authReducer
-  })
-)
+const store= configureStore();
 
 store.subscribe(()=> {
   console.log(store.getState())
