@@ -1,15 +1,22 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { connect } from 'react-redux'
+import BlogListItem from './BlogListItem'
 
-const BlogList = () => {
+const BlogList = (props) => {
+    console.log(props)
   return (
-    <div>
-      <p>Blog Page</p>
-      <Link to="/blogs/1">BLOG 1</Link> |
-      <Link to="/blogs/2">BLOG 2</Link> |
-      <Link to="/blogs/3">BLOG 3</Link> |
-    </div>
+    <ul>
+        {props.bloklar.map(blog => {
+            return <BlogListItem key = {blog.id} {...blog}/>
+        })}
+    </ul>
   )
 }
 
-export default BlogList;
+const mapStateToProps = (state) => {
+    return {
+        bloklar:state.blogs
+    }
+}
+
+export default connect(mapStateToProps)(BlogList)
