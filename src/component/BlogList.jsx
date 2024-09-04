@@ -19,4 +19,5 @@ const mapStateToProps = (state) => {
     }
 }
 
+//higher order component
 export default connect(mapStateToProps)(BlogList)
